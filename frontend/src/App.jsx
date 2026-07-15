@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Activity, Search, Filter, Loader2 } from 'lucide-react';
+import { Toaster, toast } from 'react-hot-toast';
 import KPICards from './components/KPICards';
 import AnomalyChart from './components/AnomalyChart';
 import TransactionTable from './components/TransactionTable';
@@ -51,8 +52,17 @@ function App() {
 
   const generateInsights = async () => {
     setIsAiLoading(true);
+    
+    const aiPromise = axios.post(`${API_URL}/api/analyze-errors`);
+    
+    toast.promise(aiPromise, {
+      loading: 'Running AI Diagnostics...',
+      success: 'AI Diagnostics completed successfully!',
+      error: 'Failed to run AI diagnostics.',
+    });
+
     try {
-      await axios.post(`${API_URL}/api/analyze-errors`);
+      await aiPromise;
       await fetchData();
     } catch (error) {
       console.error("Error generating insights:", error);
@@ -90,6 +100,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-dark-900 p-6 md:p-8">
+      <Toaster position="top-right" toastOptions={{ style: { background: '#1e293b', color: '#f8fafc', border: '1px solid #334155' } }} />
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Header */}
