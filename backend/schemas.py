@@ -26,6 +26,14 @@ class AnomalyChartData(BaseModel):
     status_mismatch: int = 0
     duplicate: int = 0
     missing: int = 0
+    amount_mismatch: int = 0
+    timestamp_mismatch: int = 0
+    revenue_at_risk: float = 0.0
+
+class TrendResponse(BaseModel):
+    summary: str
+    change_percentage: float
+    direction: str
 
 class AIInsightBase(BaseModel):
     anomaly_type: str

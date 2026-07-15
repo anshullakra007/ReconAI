@@ -3,6 +3,7 @@ from sqlalchemy import func
 import models
 import schemas
 import datetime
+import pandas as pd
 
 def _get_reconciled_anomalies(db: Session):
     anomalies = []
@@ -25,25 +26,58 @@ def _get_reconciled_anomalies(db: Session):
             anomaly_type="MISSING_IN_GATEWAY"
         ))
 
-    # 2. Mismatched Status
-    mismatched_records = db.query(models.InternalLedger, models.GatewayLog).join(
+    # Fetch joined records for other comparisons
+    joined_records = db.query(models.InternalLedger, models.GatewayLog).join(
         models.GatewayLog, models.InternalLedger.transaction_id == models.GatewayLog.transaction_id
-    ).filter(models.InternalLedger.status != models.GatewayLog.status).all()
+    ).all()
 
-    for int_r, gw_r in mismatched_records:
-        anomalies.append(schemas.TransactionResponse(
-            id=int_r.transaction_id,
-            date=int_r.timestamp,
-            amount=int_r.amount,
-            currency=int_r.currency,
-            status=f"{int_r.status} / {gw_r.status}",
-            source="RECONCILIATION",
-            customer_id=int_r.customer_id,
-            is_anomaly=True,
-            anomaly_type="STATUS_MISMATCH"
-        ))
+    for int_r, gw_r in joined_records:
+        is_anomaly = False
+        anomaly_type = None
+        status_str = int_r.status
+
+        # 2. Status Mismatch
+        if int_r.status != gw_r.status:
+            is_anomaly = True
+            anomaly_type = "STATUS_MISMATCH"
+            status_str = f"{int_r.status} / {gw_r.status}"
         
-    # 3. Duplicates
+        # 3. Amount / Currency Mismatch
+        elif int_r.currency != gw_r.currency:
+            if gw_r.currency == "EUR" and int_r.currency == "USD":
+                # Mock conversion: 1 EUR = 1.10 USD
+                expected_usd = gw_r.amount * 1.10
+                if abs(expected_usd - int_r.amount) > 0.50:
+                    is_anomaly = True
+                    anomaly_type = "AMOUNT_MISMATCH"
+            else:
+                is_anomaly = True
+                anomaly_type = "AMOUNT_MISMATCH"
+        elif abs(int_r.amount - gw_r.amount) > 0.01:
+            is_anomaly = True
+            anomaly_type = "AMOUNT_MISMATCH"
+
+        # 4. Timestamp Mismatch (> 5 mins)
+        if not is_anomaly:
+            time_diff = abs((int_r.timestamp - gw_r.timestamp).total_seconds())
+            if time_diff > 300: # 5 minutes
+                is_anomaly = True
+                anomaly_type = "TIMESTAMP_MISMATCH"
+
+        if is_anomaly:
+            anomalies.append(schemas.TransactionResponse(
+                id=int_r.transaction_id,
+                date=int_r.timestamp,
+                amount=int_r.amount,
+                currency=int_r.currency,
+                status=status_str,
+                source="RECONCILIATION",
+                customer_id=int_r.customer_id,
+                is_anomaly=True,
+                anomaly_type=anomaly_type
+            ))
+        
+    # 5. Duplicates
     duplicate_ids = db.query(models.InternalLedger.transaction_id).group_by(
         models.InternalLedger.transaction_id
     ).having(func.count(models.InternalLedger.id) > 1).all()
@@ -107,14 +141,21 @@ def get_anomaly_chart_data(db: Session):
         d = a.date.date()
         t = a.anomaly_type
         if d not in data:
-            data[d] = {"date": str(d), "status_mismatch": 0, "duplicate": 0, "missing": 0}
+            data[d] = {"date": str(d), "status_mismatch": 0, "duplicate": 0, "missing": 0, "amount_mismatch": 0, "timestamp_mismatch": 0, "revenue_at_risk": 0.0}
+        
         if t == "STATUS_MISMATCH":
             data[d]["status_mismatch"] += 1
         elif t == "DUPLICATE":
             data[d]["duplicate"] += 1
         elif t == "MISSING_IN_GATEWAY":
             data[d]["missing"] += 1
-    
+        elif t == "AMOUNT_MISMATCH":
+            data[d]["amount_mismatch"] += 1
+        elif t == "TIMESTAMP_MISMATCH":
+            data[d]["timestamp_mismatch"] += 1
+            
+        data[d]["revenue_at_risk"] += a.amount
+            
     return sorted(list(data.values()), key=lambda x: x["date"])
 
 def save_ai_insight(db: Session, insight_data: dict):
@@ -133,3 +174,35 @@ def get_anomaly_counts(db: Session):
     for a in anomalies:
         counts[a.anomaly_type] = counts.get(a.anomaly_type, 0) + 1
     return counts.items()
+
+def get_trends(db: Session):
+    anomalies = _get_reconciled_anomalies(db)
+    if not anomalies:
+        return {"summary": "No anomalies found to analyze.", "change_percentage": 0.0, "direction": "neutral"}
+        
+    df = pd.DataFrame([a.dict() for a in anomalies])
+    df['date'] = pd.to_datetime(df['date']).dt.date
+    
+    daily_counts = df.groupby('date').size().sort_index()
+    
+    if len(daily_counts) < 2:
+        return {"summary": "Not enough data for trend analysis.", "change_percentage": 0.0, "direction": "neutral"}
+        
+    latest = daily_counts.iloc[-1]
+    previous = daily_counts.iloc[-2]
+    
+    if previous == 0:
+        change = 100.0
+    else:
+        change = ((latest - previous) / previous) * 100
+        
+    direction = "increase" if change > 0 else "decrease"
+    change_abs = abs(round(change, 1))
+    
+    summary = f"{'+' if change > 0 else '-'}{change_abs}% {direction} in errors since yesterday."
+    
+    return {
+        "summary": summary,
+        "change_percentage": change_abs,
+        "direction": direction
+    }
