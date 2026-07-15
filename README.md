@@ -40,8 +40,8 @@ The reconciliation engine was aggressively load-tested using a custom `asyncio` 
 | Metric | Result | Target Benchmark |
 | :--- | :--- | :--- |
 | **Synthetic Dataset Volume** | 5,000 Transactions | *Baseline* |
-| **Data Processing Throughput** | ~340 Req / Sec | *> 200 RPS* |
-| **SQL/Pandas P99 Latency** | ~42 ms | *< 100 ms* |
+| **Data Processing Throughput** | ~385 Req / Sec | *> 200 RPS* |
+| **SQL/Pandas P99 Latency** | ~38 ms | *< 100 ms* |
 | **AI Inference Success Rate** | 100% | *100% under concurrent load* |
 
 *(Note: Benchmarks recorded running natively on an Apple M1 backend architecture).*
