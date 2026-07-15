@@ -15,33 +15,33 @@ const AIInsights = ({ data }) => {
   return (
     <div className="space-y-4">
       {data.map((insight) => (
-        <div key={insight.id} className="relative bg-dark-900 rounded-lg p-4 border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.15)] transition-all hover:shadow-[0_0_20px_rgba(99,102,241,0.25)]">
-          <div className="flex items-center justify-between mb-3">
-            <span className="bg-indigo-600 text-white text-xs font-bold px-2.5 py-1 rounded shadow-[0_0_10px_rgba(79,70,229,0.5)]">
+        <div key={insight.id} className="relative bg-dark-900 rounded-lg p-4 border border-dark-border">
+          <div className="flex items-center justify-between mb-4">
+            <span className="bg-dark-800 text-slate-300 border border-dark-border text-xs font-semibold px-2 py-1 rounded">
               {insight.anomaly_type.replace(/_/g, ' ')}
             </span>
-            <span className="text-xs text-indigo-300 font-medium bg-indigo-500/10 px-2 py-1 rounded-full">
+            <span className="text-xs text-slate-400 font-medium">
               {insight.affected_count} records
             </span>
           </div>
           
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div>
-              <div className="flex items-center gap-1.5 text-rose-400 mb-1">
-                <AlertCircle size={16} />
-                <h4 className="text-sm font-semibold text-slate-200">Root Cause Summary</h4>
+              <div className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                <AlertCircle size={14} />
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Root Cause</h4>
               </div>
-              <p className="text-sm text-slate-300 leading-relaxed pl-5 font-light">
+              <p className="text-sm text-slate-300 leading-relaxed pl-5 font-normal">
                 {insight.root_cause_summary}
               </p>
             </div>
             
-            <div className="pt-2 border-t border-slate-700/50">
-              <div className="flex items-center gap-1.5 text-emerald-400 mb-1">
-                <CheckCircle2 size={16} />
-                <h4 className="text-sm font-semibold text-slate-200">Recommended Action</h4>
+            <div className="pt-3 border-t border-dark-border">
+              <div className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                <CheckCircle2 size={14} />
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Recommendation</h4>
               </div>
-              <p className="text-sm text-slate-300 leading-relaxed pl-5 font-light">
+              <p className="text-sm text-slate-300 leading-relaxed pl-5 font-normal">
                 {insight.recommended_action}
               </p>
             </div>

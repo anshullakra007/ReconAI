@@ -1,13 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  --color-dark-900: #0f172a;
-  --color-dark-800: #1e293b;
-  --color-dark-700: #334155;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-dark-900: #000000;
+  --color-dark-800: #0a0a0a;
+  --color-dark-700: #171717;
+  --color-dark-border: #262626;
+  --color-accent: #ededed;
+  --color-accent-hover: #a3a3a3;
 }
 
 @layer base {
   body {
-    @apply bg-dark-900 text-slate-200 antialiased;
+    @apply bg-dark-900 text-slate-300 font-sans antialiased selection:bg-white/20;
   }
 }
