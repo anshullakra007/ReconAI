@@ -7,7 +7,7 @@ import random
 
 def generate_data(db: Session, models_module):
     print("Generating synthetic data into two tables...")
-    num_records = 5000
+    num_records = 500
     
     base_dates = [datetime.utcnow() - timedelta(days=random.randint(0, 7)) for _ in range(num_records)]
     base_amounts = [round(random.uniform(10, 500), 2) for _ in range(num_records)]
