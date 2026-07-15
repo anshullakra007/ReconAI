@@ -16,7 +16,11 @@ app = FastAPI(title="ReconAI API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://frontend-fawn-five-21.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:5173"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,7 +29,13 @@ app.add_middleware(
 @app.on_event("startup")
 def on_startup():
     db = next(get_db())
-    generate_data.generate_data(db, models)
+    # Only generate data if the database is empty
+    first_record = db.query(models.InternalLedger).first()
+    if first_record is None:
+        print("Database is empty. Triggering synthetic data generation...")
+        generate_data.generate_data(db, models)
+    else:
+        print("Database already populated. Skipping generation.")
     db.close()
 
 @app.get("/api/kpis", response_model=schemas.KPIResponse)
@@ -76,3 +86,7 @@ def analyze_errors(background_tasks: BackgroundTasks, db: Session = Depends(get_
 @app.get("/api/insights", response_model=List[schemas.AIInsightResponse])
 def get_insights(db: Session = Depends(get_db)):
     return crud.get_ai_insights(db)
+
+@app.get("/api/insights/trends", response_model=schemas.TrendResponse)
+def read_trends(db: Session = Depends(get_db)):
+    return crud.get_trends(db)

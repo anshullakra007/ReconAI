@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Activity } from 'lucide-react';
+import { Activity, Search, Filter, Loader2 } from 'lucide-react';
 import KPICards from './components/KPICards';
 import AnomalyChart from './components/AnomalyChart';
 import TransactionTable from './components/TransactionTable';
@@ -10,25 +10,36 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 function App() {
   const [kpis, setKpis] = useState(null);
+  const [trends, setTrends] = useState(null);
   const [chartData, setChartData] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [insights, setInsights] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  
+  // Filters and States
+  const [filterType, setFilterType] = useState('ALL');
+  const [filterCurrency, setFilterCurrency] = useState('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isAiLoading, setIsAiLoading] = useState(false);
 
   const fetchData = async () => {
     try {
-      const [kpiRes, chartRes, transRes, insightsRes] = await Promise.all([
+      const [kpiRes, trendsRes, chartRes, transRes, insightsRes] = await Promise.all([
         axios.get(`${API_URL}/api/kpis`),
+        axios.get(`${API_URL}/api/insights/trends`),
         axios.get(`${API_URL}/api/chart-data`),
-        axios.get(`${API_URL}/api/anomalies?limit=20`),
+        axios.get(`${API_URL}/api/anomalies?limit=50`), // Fetch more so we can filter locally
         axios.get(`${API_URL}/api/insights`)
       ]);
       setKpis(kpiRes.data);
+      setTrends(trendsRes.data);
       setChartData(chartRes.data);
       setTransactions(transRes.data);
       setInsights(insightsRes.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -39,19 +50,39 @@ function App() {
   }, []);
 
   const generateInsights = async () => {
+    setIsAiLoading(true);
     try {
       await axios.post(`${API_URL}/api/analyze-errors`);
-      fetchData();
+      await fetchData();
     } catch (error) {
       console.error("Error generating insights:", error);
+    } finally {
+      setIsAiLoading(false);
     }
   };
+
+  const filteredTransactions = transactions.filter(tx => {
+    if (filterType !== 'ALL' && tx.anomaly_type !== filterType) return false;
+    if (filterCurrency !== 'ALL' && tx.currency !== filterCurrency) return false;
+    if (searchQuery && !tx.id.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-dark-900">
         <div className="text-xl font-semibold text-blue-400 flex items-center gap-2">
           <Activity className="animate-pulse" /> Loading ReconAI...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-dark-900">
+        <div className="text-xl font-semibold text-rose-500 bg-rose-500/10 p-6 rounded-xl border border-rose-500/50">
+          Failed to connect to backend server
         </div>
       </div>
     );
@@ -72,9 +103,19 @@ function App() {
           </div>
         </header>
 
-        {/* KPIs */}
-        <section>
+        {/* KPIs & Trends */}
+        <section className="space-y-4">
           {kpis && <KPICards data={kpis} />}
+          {trends && (
+            <div className="bg-dark-800 border border-slate-700/50 rounded-lg p-4 flex items-center gap-3">
+              <span className={`flex h-2 w-2 rounded-full ${trends.direction === 'increase' ? 'bg-rose-500' : 'bg-emerald-500'}`}></span>
+              <p className="text-sm text-slate-300 font-medium">
+                <strong className={trends.direction === 'increase' ? 'text-rose-400' : 'text-emerald-400'}>
+                  {trends.summary}
+                </strong>
+              </p>
+            </div>
+          )}
         </section>
 
         {/* Charts & AI */}
@@ -92,9 +133,11 @@ function App() {
                <h2 className="text-lg font-semibold text-white">AI Insights</h2>
                <button 
                  onClick={generateInsights}
-                 className="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-[0_0_15px_rgba(79,70,229,0.4)]"
+                 disabled={isAiLoading}
+                 className={`flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 shadow-[0_0_15px_rgba(79,70,229,0.4)] ${isAiLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
                >
-                 Run AI Diagnostics
+                 {isAiLoading ? <Loader2 size={16} className="animate-spin" /> : null}
+                 {isAiLoading ? 'Analyzing...' : 'Run AI Diagnostics'}
                </button>
              </div>
              <div className="flex-1 overflow-y-auto pr-2 relative z-10">
@@ -103,12 +146,52 @@ function App() {
           </section>
         </div>
 
-        {/* Data Table */}
-        <section className="bg-dark-800 border border-slate-700/50 rounded-xl shadow-xl overflow-hidden">
-          <div className="p-6 border-b border-slate-700/50">
-            <h2 className="text-lg font-semibold text-white">Recent Transactions</h2>
+        {/* Filter Toolbar & Data Table */}
+        <section className="bg-dark-800 border border-slate-700/50 rounded-xl shadow-xl overflow-hidden flex flex-col">
+          <div className="p-5 border-b border-slate-700/50 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-dark-900/50">
+            <h2 className="text-lg font-semibold text-white whitespace-nowrap">Anomalous Records</h2>
+            
+            <div className="flex flex-wrap md:flex-nowrap items-center gap-3 w-full md:w-auto">
+              <div className="relative flex-1 md:flex-none">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                <input 
+                  type="text" 
+                  placeholder="Search TXN ID..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full md:w-64 bg-dark-900 border border-slate-700 text-slate-200 text-sm rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:border-indigo-500 transition-colors"
+                />
+              </div>
+              
+              <div className="flex items-center gap-2 relative flex-1 md:flex-none min-w-[150px]">
+                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 z-10 pointer-events-none" size={16} />
+                <select 
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="w-full bg-dark-900 border border-slate-700 text-slate-200 text-sm rounded-lg pl-9 pr-3 py-2 focus:outline-none focus:border-indigo-500 appearance-none transition-colors"
+                >
+                  <option value="ALL">All Types</option>
+                  <option value="STATUS_MISMATCH">Status Mismatch</option>
+                  <option value="MISSING_IN_GATEWAY">Missing</option>
+                  <option value="DUPLICATE">Duplicate</option>
+                  <option value="AMOUNT_MISMATCH">Amount Error</option>
+                  <option value="TIMESTAMP_MISMATCH">Time Drift</option>
+                </select>
+              </div>
+
+              <select 
+                value={filterCurrency}
+                onChange={(e) => setFilterCurrency(e.target.value)}
+                className="bg-dark-900 border border-slate-700 text-slate-200 text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500 appearance-none transition-colors flex-none"
+              >
+                <option value="ALL">All Currencies</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+              </select>
+            </div>
           </div>
-          <TransactionTable data={transactions} />
+          
+          <TransactionTable data={filteredTransactions} />
         </section>
 
       </div>

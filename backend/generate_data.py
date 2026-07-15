@@ -6,10 +6,6 @@ from datetime import datetime, timedelta
 import random
 
 def generate_data(db: Session, models_module):
-    if db.query(models_module.InternalLedger).count() > 0:
-        print("Data already exists. Skipping generation.")
-        return
-
     print("Generating synthetic data into two tables...")
     num_records = 5000
     
@@ -42,6 +38,39 @@ def generate_data(db: Session, models_module):
     dup_idx = internal_df[~internal_df.index.isin(mismatch_idx) & ~internal_df.index.isin(missing_idx)].sample(frac=0.01).index
     duplicates = internal_df.loc[dup_idx].copy()
     internal_df = pd.concat([internal_df, duplicates], ignore_index=True)
+
+    # 4. Currency / Amount Mismatch (2%)
+    amount_mismatch_idx = internal_df[
+        ~internal_df.index.isin(mismatch_idx) & 
+        ~internal_df.index.isin(missing_idx) & 
+        ~internal_df.index.isin(dup_idx)
+    ].sample(frac=0.02).index
+    gateway_df.loc[amount_mismatch_idx, 'currency'] = 'EUR'
+    gateway_df.loc[amount_mismatch_idx, 'amount'] = round(gateway_df.loc[amount_mismatch_idx, 'amount'] * random.uniform(0.5, 0.8), 2)
+
+    # 5. Timestamp Slack Mismatch (> 5 mins) (2%)
+    time_mismatch_idx = internal_df[
+        ~internal_df.index.isin(mismatch_idx) & 
+        ~internal_df.index.isin(missing_idx) & 
+        ~internal_df.index.isin(dup_idx) &
+        ~internal_df.index.isin(amount_mismatch_idx)
+    ].sample(frac=0.02).index
+    gateway_df.loc[time_mismatch_idx, 'timestamp'] = gateway_df.loc[time_mismatch_idx, 'timestamp'] + pd.to_timedelta(np.random.randint(6, 30, size=len(time_mismatch_idx)), unit='m')
+
+    # --- INJECT SAFE EDGE CASES (NOT ANOMALIES) ---
+    
+    # Safe drift (1 to 4 minutes) to 10% of records
+    safe_drift_idx = internal_df[
+        ~internal_df.index.isin(time_mismatch_idx)
+    ].sample(frac=0.10).index
+    gateway_df.loc[safe_drift_idx, 'timestamp'] = gateway_df.loc[safe_drift_idx, 'timestamp'] + pd.to_timedelta(np.random.randint(1, 5, size=len(safe_drift_idx)), unit='m')
+
+    # Safe currency conversion (Gateway is EUR, amount is exactly USD / 1.10) to 5% of records
+    safe_curr_idx = internal_df[
+        ~internal_df.index.isin(amount_mismatch_idx)
+    ].sample(frac=0.05).index
+    gateway_df.loc[safe_curr_idx, 'currency'] = 'EUR'
+    gateway_df.loc[safe_curr_idx, 'amount'] = round(gateway_df.loc[safe_curr_idx, 'amount'] / 1.10, 2)
 
     # Save to DB
     internal_records = internal_df.to_dict('records')
