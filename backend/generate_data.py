@@ -59,14 +59,14 @@ def generate_data(db: Session, models_module):
     # --- INJECT SAFE EDGE CASES (NOT ANOMALIES) ---
     
     # Safe drift (1 to 4 minutes) to 10% of records
-    safe_drift_idx = internal_df[
-        ~internal_df.index.isin(time_mismatch_idx)
+    safe_drift_idx = gateway_df[
+        ~gateway_df.index.isin(time_mismatch_idx)
     ].sample(frac=0.10).index
     gateway_df.loc[safe_drift_idx, 'timestamp'] = gateway_df.loc[safe_drift_idx, 'timestamp'] + pd.to_timedelta(np.random.randint(1, 5, size=len(safe_drift_idx)), unit='m')
 
     # Safe currency conversion (Gateway is EUR, amount is exactly USD / 1.10) to 5% of records
-    safe_curr_idx = internal_df[
-        ~internal_df.index.isin(amount_mismatch_idx)
+    safe_curr_idx = gateway_df[
+        ~gateway_df.index.isin(amount_mismatch_idx)
     ].sample(frac=0.05).index
     gateway_df.loc[safe_curr_idx, 'currency'] = 'EUR'
     gateway_df.loc[safe_curr_idx, 'amount'] = round(gateway_df.loc[safe_curr_idx, 'amount'] / 1.10, 2)
