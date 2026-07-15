@@ -37,7 +37,6 @@ def generate_data(db: Session, models_module):
     # 3. Duplicate Charges (1%)
     dup_idx = internal_df[~internal_df.index.isin(mismatch_idx) & ~internal_df.index.isin(missing_idx)].sample(frac=0.01).index
     duplicates = internal_df.loc[dup_idx].copy()
-    internal_df = pd.concat([internal_df, duplicates], ignore_index=True)
 
     # 4. Currency / Amount Mismatch (2%)
     amount_mismatch_idx = internal_df[
@@ -71,6 +70,9 @@ def generate_data(db: Session, models_module):
     ].sample(frac=0.05).index
     gateway_df.loc[safe_curr_idx, 'currency'] = 'EUR'
     gateway_df.loc[safe_curr_idx, 'amount'] = round(gateway_df.loc[safe_curr_idx, 'amount'] / 1.10, 2)
+
+    # Concatenate duplicates to internal_df now that index mapping is complete
+    internal_df = pd.concat([internal_df, duplicates], ignore_index=True)
 
     # Save to DB
     internal_records = internal_df.to_dict('records')
