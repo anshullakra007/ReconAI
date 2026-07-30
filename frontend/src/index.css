@@ -15,3 +15,12 @@
     @apply bg-dark-900 text-slate-300 font-sans antialiased selection:bg-white/20;
   }
 }
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

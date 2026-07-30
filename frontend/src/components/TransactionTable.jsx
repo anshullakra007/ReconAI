@@ -1,4 +1,5 @@
 import React from 'react';
+import InfoTooltip from './InfoTooltip';
 
 const TransactionTable = ({ data }) => {
   if (!data || data.length === 0) {
@@ -7,44 +8,42 @@ const TransactionTable = ({ data }) => {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-left border-collapse">
+      <table className="w-full text-left border-collapse text-sm">
         <thead>
-          <tr className="bg-dark-900 border-b border-slate-700/50">
-            <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Transaction ID</th>
-            <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
-            <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Amount</th>
-            <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Source</th>
-            <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Anomaly Type</th>
-            <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status Mismatch</th>
+          <tr className="border-b border-zinc-800 bg-[#111]">
+            <th className="px-6 py-4 font-medium text-zinc-400 text-xs">Transaction ID</th>
+            <th className="px-6 py-4 font-medium text-zinc-400 text-xs">Date</th>
+            <th className="px-6 py-4 font-medium text-zinc-400 text-xs">Amount</th>
+            <th className="px-6 py-4 font-medium text-zinc-400 text-xs">Source <InfoTooltip text="Where the data originated (INTERNAL Ledger vs GATEWAY Logs)." position="bottom" /></th>
+            <th className="px-6 py-4 font-medium text-zinc-400 text-xs">Type <InfoTooltip text="The specific categorization of the anomaly." position="bottom" /></th>
+            <th className="px-6 py-4 font-medium text-zinc-400 text-xs">Status Mismatch <InfoTooltip text="Internal Status vs Gateway Status" position="bottom" /></th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-dark-border">
+        <tbody className="divide-y divide-zinc-800/50">
           {data.map((tx) => (
-            <tr key={tx.id} className="hover:bg-dark-900 transition-colors">
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-300 font-mono">
+            <tr key={tx.id} className="hover:bg-[#1a1a1a] transition-colors group">
+              <td className="px-6 py-4 text-zinc-300 font-mono text-xs">
                 {tx.id.substring(0, 8)}...
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+              <td className="px-6 py-4 text-zinc-400">
                 {new Date(tx.date).toLocaleDateString()}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-200">
+              <td className="px-6 py-4 text-zinc-200">
                 ${tx.amount.toFixed(2)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+              <td className="px-6 py-4 text-zinc-400">
                 {tx.source}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span className={`px-2.5 py-1 text-xs font-medium rounded border ${
-                  tx.anomaly_type === 'STATUS_MISMATCH' ? 'bg-dark-900 text-slate-300 border-slate-600' :
-                  tx.anomaly_type === 'MISSING_IN_GATEWAY' ? 'bg-dark-900 text-slate-300 border-slate-600' :
-                  tx.anomaly_type === 'DUPLICATE' ? 'bg-dark-900 text-slate-300 border-slate-600' :
-                  'bg-dark-900 text-slate-300 border-slate-700'
-                }`}>
+              <td className="px-6 py-4">
+                <span className="text-xs font-medium text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-1 rounded">
                   {tx.anomaly_type ? tx.anomaly_type.replace(/_/g, ' ') : 'NORMAL'}
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
-                {tx.status}
+              <td className="px-6 py-4 text-zinc-400 flex items-center justify-between">
+                <span>{tx.status}</span>
+                <button className="opacity-0 group-hover:opacity-100 text-zinc-300 hover:text-white hover:underline text-xs transition-all">
+                  Inspect &rarr;
+                </button>
               </td>
             </tr>
           ))}
