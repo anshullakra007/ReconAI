@@ -24,6 +24,27 @@
 
 **The Solution:** ReconAI automates the entire reconciliation pipeline. It asynchronously ingests transaction logs, flags anomalies (currency mismatches, timestamp drifts, missing records), and utilizes Google's Gemini LLM to automatically generate actionable Root Cause Summaries for customer support teams.
 
+## 🏗️ System Architecture & Reconciliation Flow
+
+```mermaid
+graph TD
+    Client[React Dashboard / Support Engineer] -->|HTTP REST JSON| API[FastAPI Async Server]
+    
+    subgraph "Real-Time Pandas Reconciliation Engine"
+        API -->|Ingest Ledger & Gateway Logs| Ingest[Dual Transaction Ingestion Engine]
+        Ingest -->|Outer Joins & Time-Slack Matching| Recon[Pandas Anomaly Detection Core]
+        Recon -->|Flag Discrepancies| Anomalies[Currency Mismatch / Timestamp Drift / Missing Record]
+    end
+    
+    subgraph "Automated AI L1 Diagnostics"
+        Anomalies -->|Batch Error Context| Gemini[Google Gemini LLM SDK]
+        Gemini -->|Structured Diagnostic Output| RCA[Actionable Root Cause Analysis & RCA Summary]
+    end
+    
+    Recon -->|Revenue at Risk & Metrics| Client
+    RCA -->|Formatted RCA Alert| Client
+```
+
 ---
 
 ## 🚀 Core Platform Features
