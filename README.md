@@ -1,7 +1,7 @@
 <div align="center">
   
 # ️ ReconAI
-**AI-Powered Reconciliation Platform**
+AI-Powered Reconciliation Platform
 
 [](https://python.org)
 [](https://fastapi.tiangolo.com/)
@@ -20,7 +20,9 @@
 
 ##  The Business Case
 
-**The Problem:**In FinTech, dropped or duplicated transactions between internal ledgers and third-party payment gateways (like Stripe or Plaid) cause immense customer friction. Product analysts and support engineers spend countless hours manually writing SQL joins to find missing records and diagnose the root cause.**The Solution:** ReconAI automates the entire reconciliation pipeline. It asynchronously ingests transaction logs, flags anomalies (currency mismatches, timestamp drifts, missing records), and utilizes Google's Gemini LLM to automatically generate actionable Root Cause Summaries for customer support teams.
+The Problem: In FinTech, dropped or duplicated transactions between internal ledgers and third-party payment gateways (like Stripe or Plaid) cause immense customer friction. Product analysts and support engineers spend countless hours manually writing SQL joins to find missing records and diagnose the root cause. 
+
+The Solution: ReconAI automates the entire reconciliation pipeline. It asynchronously ingests transaction logs, flags anomalies (currency mismatches, timestamp drifts, missing records), and utilizes Google's Gemini LLM to automatically generate actionable Root Cause Summaries for customer support teams.
 
 ## ️ System Architecture & Reconciliation Flow
 
@@ -47,10 +49,10 @@ graph TD
 
 ##  Core Platform Features
 
-*   **Real-Time Reconciliation Engine:** FastAPI and Pandas backend dynamically executes outer joins and time-window slack matching to flag discrepancies across dual databases.
-*   **Automated AI Diagnostics:** Integrates the Google Gemini API to analyze batches of failed transactions, outputting formatted Root Cause Analyses (RCA) and recommended actions.
-*   **Enterprise Insights Dashboard:** A dark-mode React application utilizing Recharts to visualize *Revenue at Risk*, anomaly volume over time, and week-over-week error trends.
-*   **Interactive Data Filtering:** Allows product managers to instantly slice transaction data by Error Type, Currency, and unique identifiers.
+*    Real-Time Reconciliation Engine: FastAPI and Pandas backend dynamically executes outer joins and time-window slack matching to flag discrepancies across dual databases.
+*    Automated AI Diagnostics: Integrates the Google Gemini API to analyze batches of failed transactions, outputting formatted Root Cause Analyses (RCA) and recommended actions.
+*    Enterprise Insights Dashboard: A dark-mode React application utilizing Recharts to visualize *Revenue at Risk*, anomaly volume over time, and week-over-week error trends.
+*    Interactive Data Filtering: Allows product managers to instantly slice transaction data by Error Type, Currency, and unique identifiers.
 
 ---
 
@@ -60,10 +62,10 @@ The reconciliation engine was aggressively load-tested using a custom `asyncio` 
 
 | Metric | Result | Target Benchmark |
 | :--- | :--- | :--- |
-| **Synthetic Dataset Volume** | 5,000 Transactions | *Baseline* |
-| **Data Processing Throughput** | 420.16 Req / Sec | *> 200 RPS* |
-| **SQL/Pandas P99 Latency** | 38.63 ms | *< 100 ms* |
-| **AI Inference Success Rate** | 100% | *100% under concurrent load* |
+| Synthetic Dataset Volume | 5,000 Transactions | *Baseline* |
+| Data Processing Throughput | 420.16 Req / Sec | *> 200 RPS* |
+| SQL/Pandas P99 Latency | 38.63 ms | *< 100 ms* |
+| AI Inference Success Rate | 100% | *100% under concurrent load* |
 
 *(Note: Benchmarks recorded running natively on an Apple M1 backend architecture).*
 
@@ -93,9 +95,9 @@ export GEMINI_API_KEY="your_api_key_here"
 docker-compose up --build
 ```
 
-* **SRE Dashboard:** `http://localhost:3000`
-* **Backend API:** `http://localhost:8000`
-* **Swagger API Docs:** `http://localhost:8000/docs`
+* SRE Dashboard: `http://localhost:3000`
+* Backend API: `http://localhost:8000`
+* Swagger API Docs: `http://localhost:8000/docs`
 
 ---
 
