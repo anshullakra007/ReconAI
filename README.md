@@ -105,21 +105,3 @@ docker-compose up --build
 ---
 
 *Built to bridge the gap between Data Engineering, Product Strategy, and Customer Success.*
-
----
-
----
-
-## Why I built this ?
-
-### Situation
-Gathering intelligence and analyzing vast amounts of unstructured text data manually is inefficient and prone to human error.
-
-### Task
-I wanted to build an AI-driven reconnaissance tool capable of scraping, parsing, and summarizing complex data streams automatically.
-
-### Action
-I engineered a data pipeline using Python that integrates web scraping with Large Language Models. I implemented asynchronous I/O to rapidly pull data from multiple sources, utilized NLP libraries to clean the text, and passed the context to an LLM via API to extract structured insights and sentiment analysis.
-
-### Result
-ReconAI successfully automates hours of manual data analysis into seconds, demonstrating my ability to build robust data pipelines and integrate state-of-the-art AI into practical utility applications.
