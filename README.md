@@ -107,14 +107,7 @@ docker-compose up --build
 
 ## Why I built this ?
 
-**Situation:** 
-While building modern software applications, developing structured and scalable solutions is critical. The requirement was to build and maintain `ReconAI` to address specific technical challenges and provide a robust implementation.
-
-**Task:** 
-My goal was to engineer a reliable and efficient solution for `ReconAI`, ensuring clean architecture, maintainability, and alignment with project objectives.
-
-**Action:** 
-I designed and implemented the core logic and project architecture, focusing on best practices in code organization and system design. I systematically tackled the problem by breaking down the requirements, writing modular code, and integrating necessary dependencies to bring the repository to life.
-
-**Result:** 
-The project successfully fulfilled its core requirements, serving as a functional codebase. It demonstrates a clear understanding of software engineering principles and provides a solid foundation for future scaling and feature additions.
+**Situation:** Gathering intelligence and analyzing vast amounts of unstructured text data manually is inefficient and prone to human error.
+**Task:** I wanted to build an AI-driven reconnaissance tool capable of scraping, parsing, and summarizing complex data streams automatically.
+**Action:** I engineered a data pipeline using Python that integrates web scraping with Large Language Models. I implemented asynchronous I/O to rapidly pull data from multiple sources, utilized NLP libraries to clean the text, and passed the context to an LLM via API to extract structured insights and sentiment analysis.
+**Result:** ReconAI successfully automates hours of manual data analysis into seconds, demonstrating my ability to build robust data pipelines and integrate state-of-the-art AI into practical utility applications.
