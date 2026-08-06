@@ -1,6 +1,6 @@
 <v l="">
  
-# 🛡️ RAI
+# ️ RAI
 **AI-w Rl lf**
 
 [![y](://.l./b/y-3.11-3776AB?yl=f--b&l=y&lCl=w)](://y.)
@@ -12,19 +12,19 @@
 
 > *l ul SQL qu l M T Rlu (MTTR) f y u .*
 
-### 🌐 [Lv Iv D](://f-fw-fv-21.vl./)
+###  [Lv Iv D](://f-fw-fv-21.vl./)
 
 </v>
 
 ---
 
-## 📈 T Bu C
+##  T Bu C
 
 **T bl:** I FT, ul bw l l -y y wy (lk S l) u u f. u ly u ul u ully w SQL f u. 
 
 **T Slu:** RAI u l l. I yuly l, fl l (uy , f, ), ulz Gl' G LLM ully bl R Cu Su f u u .
 
-## 🏗️ Sy Au & Rl Flw
+## ️ Sy Au & Rl Flw
 
 ```
  TD
@@ -47,16 +47,16 @@
 
 ---
 
-## 🚀 C lf Fu
+##  C lf Fu
 
-* **⚡ Rl-T Rl :** FAI bk ylly u u -ww lk fl ul b.
-* **🤖 Au AI D:** I Gl G AI lyz b f fl , uu f R Cu Aly (RCA) .
-* **📊 I Db:** A k- R l ulz R vulz *Rvu Rk*, ly vlu v , wk-v-wk .
-* **🔍 Iv D Fl:** Allw u ly l by Ty, Cuy, uqu f.
+* ** Rl-T Rl :** FAI bk ylly u u -ww lk fl ul b.
+* ** Au AI D:** I Gl G AI lyz b f fl , uu f R Cu Aly (RCA) .
+* ** I Db:** A k- R l ulz R vulz *Rvu Rk*, ly vlu v , wk-v-wk .
+* ** Iv D Fl:** Allw u ly l by Ty, Cuy, uqu f.
 
 ---
 
-## 🏎️ f Bk
+## ️ f Bk
 
 T l w vly l- u u `y` `` bk u u uu AI f ly. 
 
@@ -71,7 +71,7 @@ T l w vly l- u u `y` `` bk u u uu AI f ly.
 
 ---
 
-## 🛠️ Quk & Dly
+## ️ Quk & Dly
 
 RAI fully z u-y. Yu u ul- u (F + Bk + DB) w l .
 
