@@ -20,9 +20,7 @@
 
 ##  The Business Case
 
-**The Problem:** In FinTech, dropped or duplicated transactions between internal ledgers and third-party payment gateways (like Stripe or Plaid) cause immense customer friction. Product analysts and support engineers spend countless hours manually writing SQL joins to find missing records and diagnose the root cause. 
-
-**The Solution:** ReconAI automates the entire reconciliation pipeline. It asynchronously ingests transaction logs, flags anomalies (currency mismatches, timestamp drifts, missing records), and utilizes Google's Gemini LLM to automatically generate actionable Root Cause Summaries for customer support teams.
+**The Problem:**In FinTech, dropped or duplicated transactions between internal ledgers and third-party payment gateways (like Stripe or Plaid) cause immense customer friction. Product analysts and support engineers spend countless hours manually writing SQL joins to find missing records and diagnose the root cause.**The Solution:** ReconAI automates the entire reconciliation pipeline. It asynchronously ingests transaction logs, flags anomalies (currency mismatches, timestamp drifts, missing records), and utilizes Google's Gemini LLM to automatically generate actionable Root Cause Summaries for customer support teams.
 
 ## ️ System Architecture & Reconciliation Flow
 
@@ -49,10 +47,10 @@ graph TD
 
 ##  Core Platform Features
 
-*   ** Real-Time Reconciliation Engine:** FastAPI and Pandas backend dynamically executes outer joins and time-window slack matching to flag discrepancies across dual databases.
-*   ** Automated AI Diagnostics:** Integrates the Google Gemini API to analyze batches of failed transactions, outputting formatted Root Cause Analyses (RCA) and recommended actions.
-*   ** Enterprise Insights Dashboard:** A dark-mode React application utilizing Recharts to visualize *Revenue at Risk*, anomaly volume over time, and week-over-week error trends.
-*   ** Interactive Data Filtering:** Allows product managers to instantly slice transaction data by Error Type, Currency, and unique identifiers.
+*   **Real-Time Reconciliation Engine:** FastAPI and Pandas backend dynamically executes outer joins and time-window slack matching to flag discrepancies across dual databases.
+*   **Automated AI Diagnostics:** Integrates the Google Gemini API to analyze batches of failed transactions, outputting formatted Root Cause Analyses (RCA) and recommended actions.
+*   **Enterprise Insights Dashboard:** A dark-mode React application utilizing Recharts to visualize *Revenue at Risk*, anomaly volume over time, and week-over-week error trends.
+*   **Interactive Data Filtering:** Allows product managers to instantly slice transaction data by Error Type, Currency, and unique identifiers.
 
 ---
 
@@ -107,7 +105,14 @@ docker-compose up --build
 
 ## Why I built this ?
 
-**Situation:** Gathering intelligence and analyzing vast amounts of unstructured text data manually is inefficient and prone to human error.
-**Task:** I wanted to build an AI-driven reconnaissance tool capable of scraping, parsing, and summarizing complex data streams automatically.
-**Action:** I engineered a data pipeline using Python that integrates web scraping with Large Language Models. I implemented asynchronous I/O to rapidly pull data from multiple sources, utilized NLP libraries to clean the text, and passed the context to an LLM via API to extract structured insights and sentiment analysis.
-**Result:** ReconAI successfully automates hours of manual data analysis into seconds, demonstrating my ability to build robust data pipelines and integrate state-of-the-art AI into practical utility applications.
+### Situation
+Gathering intelligence and analyzing vast amounts of unstructured text data manually is inefficient and prone to human error.
+
+### Task
+I wanted to build an AI-driven reconnaissance tool capable of scraping, parsing, and summarizing complex data streams automatically.
+
+### Action
+I engineered a data pipeline using Python that integrates web scraping with Large Language Models. I implemented asynchronous I/O to rapidly pull data from multiple sources, utilized NLP libraries to clean the text, and passed the context to an LLM via API to extract structured insights and sentiment analysis.
+
+### Result
+ReconAI successfully automates hours of manual data analysis into seconds, demonstrating my ability to build robust data pipelines and integrate state-of-the-art AI into practical utility applications.
