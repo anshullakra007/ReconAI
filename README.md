@@ -1,6 +1,6 @@
 <div align="center">
   
-# ️ ReconAI
+# ReconAI
 
 ## Why I built this ?
 
@@ -29,19 +29,19 @@ AI-Powered Reconciliation Platform
 
 > *Eliminating manual SQL queries and accelerating Mean Time to Resolution (MTTR) for enterprise payment support teams.*
 
-###  [Live Interactive Demo](https://frontend-fawn-five-21.vercel.app/)
+### [Live Interactive Demo](https://frontend-fawn-five-21.vercel.app/)
 
 </div>
 
 ---
 
-##  The Business Case
+## The Business Case
 
 The Problem: In FinTech, dropped or duplicated transactions between internal ledgers and third-party payment gateways (like Stripe or Plaid) cause immense customer friction. Product analysts and support engineers spend countless hours manually writing SQL joins to find missing records and diagnose the root cause. 
 
 The Solution: ReconAI automates the entire reconciliation pipeline. It asynchronously ingests transaction logs, flags anomalies (currency mismatches, timestamp drifts, missing records), and utilizes Google's Gemini LLM to automatically generate actionable Root Cause Summaries for customer support teams.
 
-## ️ System Architecture & Reconciliation Flow
+## System Architecture & Reconciliation Flow
 
 ```mermaid
 graph TD
@@ -64,16 +64,16 @@ graph TD
 
 ---
 
-##  Core Platform Features
+## Core Platform Features
 
-*    Real-Time Reconciliation Engine: FastAPI and Pandas backend dynamically executes outer joins and time-window slack matching to flag discrepancies across dual databases.
-*    Automated AI Diagnostics: Integrates the Google Gemini API to analyze batches of failed transactions, outputting formatted Root Cause Analyses (RCA) and recommended actions.
-*    Enterprise Insights Dashboard: A dark-mode React application utilizing Recharts to visualize *Revenue at Risk*, anomaly volume over time, and week-over-week error trends.
-*    Interactive Data Filtering: Allows product managers to instantly slice transaction data by Error Type, Currency, and unique identifiers.
+* Real-Time Reconciliation Engine: FastAPI and Pandas backend dynamically executes outer joins and time-window slack matching to flag discrepancies across dual databases.
+* Automated AI Diagnostics: Integrates the Google Gemini API to analyze batches of failed transactions, outputting formatted Root Cause Analyses (RCA) and recommended actions.
+* Enterprise Insights Dashboard: A dark-mode React application utilizing Recharts to visualize *Revenue at Risk*, anomaly volume over time, and week-over-week error trends.
+* Interactive Data Filtering: Allows product managers to instantly slice transaction data by Error Type, Currency, and unique identifiers.
 
 ---
 
-## ️ Performance Benchmarks
+## Performance Benchmarks
 
 The reconciliation engine was aggressively load-tested using a custom `asyncio` and `aiohttp` benchmarking suite to measure data processing throughput and AI inference latency. 
 
@@ -88,7 +88,7 @@ The reconciliation engine was aggressively load-tested using a custom `asyncio` 
 
 ---
 
-## ️ Quickstart & Deployment
+## Quickstart & Deployment
 
 ReconAI is fully containerized and production-ready. You can spin up the entire multi-container architecture (Frontend + Backend + DB) with a single command.
 
